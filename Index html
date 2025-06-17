@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gewichts-Monitoring - Pflegeheim</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #f8fbff 0%, #e8f4f8 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px; /* Adjusted max-width for a more focused tool */
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-left: 5px solid #20c997; /* Main color for weight monitoring */
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%); /* Greenish-blue gradient */
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(32, 201, 151, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        h2 {
+            color: #20c997; /* Main color */
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #20c997;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: #20c997; /* Focus color */
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px 10px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(32, 201, 151, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(127, 140, 141, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e0f2f7 0%, #c7eafc 100%);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid #007bff; /* A blue accent for info */
+            color: #004085;
+        }
+
+        .info-box p {
+            margin-bottom: 5px;
+        }
+
+        .info-box h4 {
+            color: #004085;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .weight-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .weight-table th {
+            background: linear-gradient(135deg, #34495e 0%, #4a627a 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .weight-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ecf0f1;
+            vertical-align: top;
+        }
+        
+        .weight-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .weight-table tr:hover {
+            background-color: #e8f4f8;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.8em;
+            margin: 2px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #34495e;
+            color: white;
+            border-radius: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .header {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .header p {
+                font-size: 1em;
+            }
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+        @media print {
+            body { 
+                -webkit-print-color-adjust: exact !important; 
+                color-adjust: exact !important;
+                margin: 0; 
+                font-size: 10pt; 
+            }
+            .container {
+                box-shadow: none; 
+                border: none;
+                padding: 0;
+                margin: 0;
+            }
+            .header { 
+                background: #20c997 !important; /* Force background color */
+                color: white !important; 
+                padding: 15px; 
+                border-radius: 8px; 
+                text-align: center; 
+                margin-bottom: 20px; 
+                box-shadow: none; 
+            }
+            .weight-table { 
+                width: 100%; 
+                border-collapse: collapse; 
+                margin: 15px 0; 
+                box-shadow: none;
+            }
+            .weight-table th, .weight-table td { 
+                border: 1px solid #ddd; 
+                padding: 8px; 
+                text-align: left; 
+            }
+            .weight-table th { 
+                background: #34495e !important; /* Force background color */
+                color: white !important; 
+            }
+            .info-box {
+                background: #e0f2f7 !important;
+                border-left-color: #007bff !important;
+                box-shadow: none;
+            }
+            /* Hide elements not relevant for printing */
+            .btn, .footer, .input-group:has(#filterResidentWeight), .input-group:has(#residentNamesList) { display: none !important; }
+            /* Ensure text is readable */
+            .weight-table td { color: #000; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚖️ Gewichts-Monitoring - Pflegeheim</h1>
+            <p>Dokumentation und Trendanalyse der Bewohnergewichte</p>
+        </div>
+
+        <div class="card">
+            <h2>Neuen Gewichtseintrag erfassen</h2>
+            <div class="input-group">
+                <label for="residentName">Name des Bewohners:</label>
+                <input type="text" id="residentName" placeholder="Name des Bewohners" list="residentNamesList" required>
+                <datalist id="residentNamesList"></datalist>
+            </div>
+            <div class="input-group">
+                <label for="weightDate">Datum der Messung:</label>
+                <input type="date" id="weightDate" required>
+            </div>
+            <div class="input-group">
+                <label for="residentWeight">Gewicht (kg):</label>
+                <input type="number" id="residentWeight" step="0.1" placeholder="z.B. 75.3" required>
+            </div>
+            <div class="input-group">
+                <label for="weightNotes">Anmerkungen (optional):</label>
+                <textarea id="weightNotes" rows="2" placeholder="Besondere Beobachtungen, z.B. nach Krankheit oder Medikamentenwechsel"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="saveWeightEntry()">💾 Gewicht speichern</button>
+            <button class="btn btn-secondary" onclick="clearWeightForm()">❌ Formular zurücksetzen</button>
+
+            <hr style="margin: 30px 0;">
+
+            <h2>Historische Gewichtsdaten & Trends</h2>
+            <div class="input-group">
+                <label for="filterResidentWeight">Filter nach Bewohner (Name eingeben):</label>
+                <input type="text" id="filterResidentWeight" oninput="loadWeightEntries()" placeholder="Alle Bewohner anzeigen oder filtern">
+            </div>
+            <div class="info-box" id="weightTrendOutput">
+                <p>Geben Sie Gewichtsdaten ein, um Trends und Prognosen anzuzeigen.</p>
+            </div>
+            <table class="weight-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Datum</th>
+                        <th>Gewicht (kg)</th>
+                        <th>Anmerkungen</th>
+                        <th>Aktion</th>
+                    </tr>
+                </thead>
+                <tbody id="weightTableBody">
+                    </tbody>
+            </table>
+            <button class="btn btn-danger" onclick="clearAllWeightEntries()">🗑️ Alle Gewichtsdaten löschen</button>
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Aktuelle Ansicht drucken</button>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 Gewichts-Monitoring - Pflegeheim</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current date for weight monitoring input by default
+            document.getElementById('weightDate').valueAsDate = new Date();
+            loadWeightEntries(); // Load weight entries when page loads
+            updateResidentDatalist(); // Populate datalist for resident names
+        });
+
+        // --- Weight Monitoring Functions ---
+
+        function saveWeightEntry() {
+            const residentName = document.getElementById('residentName').value.trim();
+            const weightDate = document.getElementById('weightDate').value;
+            const residentWeight = parseFloat(document.getElementById('residentWeight').value);
+            const weightNotes = document.getElementById('weightNotes').value.trim();
+
+            if (!residentName || !weightDate || isNaN(residentWeight)) {
+                alert('Bitte füllen Sie die Felder "Name des Bewohners", "Datum der Messung" und "Gewicht (kg)" aus.');
+                return;
+            }
+
+            if (residentWeight <= 0) {
+                 alert('Das Gewicht muss ein positiver Wert sein.');
+                 return;
+            }
+
+            const weightEntries = JSON.parse(localStorage.getItem('haccpWeightEntries') || '[]');
+            
+            // Check for duplicate entry for the same resident on the same date
+            const existingEntryIndex = weightEntries.findIndex(entry => 
+                entry.name.toLowerCase() === residentName.toLowerCase() && entry.date === weightDate
+            );
+
+            const newEntry = {
+                id: Date.now(), // Unique ID for deletion (can be a combination of name+date for stronger uniqueness)
+                name: residentName,
+                date: weightDate, // YYYY-MM-DD format
+                weight: residentWeight,
+                notes: weightNotes
+            };
+
+            if (existingEntryIndex > -1) {
+                if (confirm(`Für "${residentName}" ist am ${new Date(weightDate).toLocaleDateString('de-DE')} bereits ein Gewicht erfasst. Möchten Sie den Eintrag überschreiben?`)) {
+                    weightEntries[existingEntryIndex] = newEntry;
+                    alert('Gewichtseintrag aktualisiert!');
+                } else {
+                    return; // User cancelled
+                }
+            } else {
+                weightEntries.push(newEntry);
+                alert('Gewicht erfolgreich gespeichert!');
+            }
+
+            localStorage.setItem('haccpWeightEntries', JSON.stringify(weightEntries));
+            clearWeightForm();
+            loadWeightEntries();
+            updateResidentDatalist(); // Update datalist after new name might be added
+        }
+
+        function clearWeightForm() {
+            document.getElementById('residentName').value = '';
+            document.getElementById('weightDate').valueAsDate = new Date(); // Reset to current date
+            document.getElementById('residentWeight').value = '';
+            document.getElementById('weightNotes').value = '';
+            document.getElementById('residentName').focus(); // Put focus back on name field
+        }
+
+        function loadWeightEntries() {
+            const weightEntries = JSON.parse(localStorage.getItem('haccpWeightEntries') || '[]');
+            const tableBody = document.getElementById('weightTableBody');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            const filterName = document.getElementById('filterResidentWeight').value.toLowerCase().trim();
+            
+            const filteredEntries = filterName 
+                ? weightEntries.filter(entry => entry.name.toLowerCase().includes(filterName))
+                : weightEntries;
+
+            // Sort entries by name and then by date (oldest first for trend calculation)
+            filteredEntries.sort((a, b) => {
+                const nameCompare = a.name.localeCompare(b.name);
+                if (nameCompare !== 0) return nameCompare;
+                
+                // For date comparison, convert YYYY-MM-DD to Date objects
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return dateA - dateB;
+            });
+
+            // Group by resident for display and trend calculation
+            const groupedByResident = filteredEntries.reduce((acc, entry) => {
+                if (!acc[entry.name]) {
+                    acc[entry.name] = [];
+                }
+                acc[entry.name].push(entry);
+                return acc;
+            }, {});
+
+            let trendOutputHtml = '';
+
+            if (Object.keys(groupedByResident).length === 0) {
+                 tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Keine Gewichtsdaten vorhanden oder nach Filter.</td></tr>';
+                 document.getElementById('weightTrendOutput').innerHTML = '<p>Keine Gewichtsdaten vorhanden oder nach Filter.</p>';
+                 return;
+            }
+
+            for (const residentName in groupedByResident) {
+                trendOutputHtml += `<h4>${residentName}:</h4>`;
+                const residentEntries = groupedByResident[residentName];
+                
+                // Display each entry in the table
+                residentEntries.forEach(entry => {
+                    const row = tableBody.insertRow();
+                    row.insertCell().textContent = entry.name;
+                    row.insertCell().textContent = new Date(entry.date).toLocaleDateString('de-DE'); // Format date for display
+                    row.insertCell().textContent = `${entry.weight.toFixed(1)} kg`; // Format to one decimal place
+                    row.insertCell().textContent = entry.notes || '-';
+                    const actionCell = row.insertCell();
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = 'Löschen';
+                    deleteBtn.className = 'btn btn-danger btn-sm';
+                    deleteBtn.onclick = () => deleteWeightEntry(entry.id);
+                    actionCell.appendChild(deleteBtn);
+                });
+
+                // Calculate and display trend only if enough data points (at least 2)
+                if (residentEntries.length >= 2) {
+                    const trend = calculateWeightTrend(residentEntries);
+                    trendOutputHtml += `<p><strong>Trend:</strong> ${trend.trendMessage}</p>`;
+                    if (trend.prognosis !== null) { // Check if prognosis was successfully calculated
+                        trendOutputHtml += `<p><strong>Prognose (in 30 Tagen):</strong> ca. ${trend.prognosis.toFixed(1)} kg</p>`;
+                    }
+                } else {
+                    trendOutputHtml += `<p>Nicht genügend Daten für Trendberechnung (mind. 2 Einträge benötigt).</p>`;
+                }
+                trendOutputHtml += `<hr style="border-top: 1px dashed #ccc; margin: 15px 0;">`; // Separator for residents
+            }
+
+            document.getElementById('weightTrendOutput').innerHTML = trendOutputHtml;
+        }
+
+        function calculateWeightTrend(entries) {
+            // Sort by date to ensure correct order for linear regression
+            entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            if (entries.length < 2) {
+                return { trendMessage: 'Nicht genügend Daten für Trendberechnung.', prognosis: null };
+            }
+
+            // Convert dates to numerical values (days since first entry)
+            const firstDate = new Date(entries[0].date);
+            const data = entries.map(entry => {
+                const dateDiff = (new Date(entry.date) - firstDate) / (1000 * 60 * 60 * 24); // Days
+                return { x: dateDiff, y: entry.weight };
+            });
+
+            let sumX = 0;
+            let sumY = 0;
+            let sumXY = 0;
+            let sumXX = 0;
+            let n = data.length;
+
+            data.forEach(point => {
+                sumX += point.x;
+                sumY += point.y;
+                sumXY += point.x * point.y;
+                sumXX += point.x * point.x;
+            });
+
+            // Handle cases where all x values are the same (e.g., all measurements on the same day)
+            // or if there's no variance in x, which would lead to division by zero.
+            if (n * sumXX - sumX * sumX === 0) {
+                const firstWeight = entries[0].weight;
+                const lastWeight = entries[entries.length - 1].weight;
+                let staticTrendMessage = '';
+                if (firstWeight === lastWeight) {
+                    staticTrendMessage = `Gewicht ist stabil bei ca. ${firstWeight.toFixed(1)} kg.`;
+                } else if (firstWeight < lastWeight) {
+                     staticTrendMessage = `Gewicht zeigt eine allgemeine Zunahme von ${ (lastWeight - firstWeight).toFixed(1) } kg.`;
+                } else {
+                    staticTrendMessage = `Gewicht zeigt eine allgemeine Abnahme von ${ (firstWeight - lastWeight).toFixed(1) } kg.`;
+                }
+                return { trendMessage: staticTrendMessage, prognosis: null };
+            }
+
+            const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+            const intercept = (sumY - slope * sumX) / n;
+
+            let trendMessage = '';
+            
+            const changePerMonth = slope * 30; // Change over 30 days
+
+            if (slope > 0.1) { // Gaining more than 100g per day (3kg/month)
+                trendMessage = `Das Gewicht steigt signifikant (${changePerMonth.toFixed(1)} kg/Monat).`;
+            } else if (slope < -0.1) { // Losing more than 100g per day (3kg/month)
+                trendMessage = `Das Gewicht sinkt signifikant (${changePerMonth.toFixed(1)} kg/Monat).`;
+            } else if (slope > 0.02) { // Slight gain (> 600g/month)
+                trendMessage = `Das Gewicht steigt leicht (+${changePerMonth.toFixed(1)} kg/Monat).`;
+            } else if (slope < -0.02) { // Slight loss (> 600g/month)
+                trendMessage = `Das Gewicht sinkt leicht (${changePerMonth.toFixed(1)} kg/Monat).`;
+            } else {
+                trendMessage = `Das Gewicht ist relativ stabil.`;
+            }
+
+            // Prognosis for 30 days from the last recorded date
+            const lastDate = new Date(entries[entries.length - 1].date);
+            const daysFromFirstToLast = (lastDate - firstDate) / (1000 * 60 * 60 * 24);
+            const prognosisDays = daysFromFirstToLast + 30; // 30 days from the last measurement date
+            const prognosisWeight = slope * prognosisDays + intercept;
+
+            return { trendMessage, prognosis: prognosisWeight };
+        }
+
+        function deleteWeightEntry(idToDelete) {
+            if (confirm('Möchten Sie diesen Gewichtseintrag wirklich löschen?')) {
+                let weightEntries = JSON.parse(localStorage.getItem('haccpWeightEntries') || '[]');
+                weightEntries = weightEntries.filter(entry => entry.id !== idToDelete);
+                localStorage.setItem('haccpWeightEntries', JSON.stringify(weightEntries));
+                loadWeightEntries(); // Reload the table
+                updateResidentDatalist();
+                alert('Gewichtseintrag gelöscht!');
+            }
+        }
+
+        function clearAllWeightEntries() {
+            if (confirm('Möchten Sie WIRKLICH ALLE Gewichtsdaten löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+                localStorage.removeItem('haccpWeightEntries');
+                loadWeightEntries(); // Update table and summary
+                updateResidentDatalist();
+                alert('Alle Gewichtsdaten wurden gelöscht!');
+            }
+        }
+
+        function updateResidentDatalist() {
+            const weightEntries = JSON.parse(localStorage.getItem('haccpWeightEntries') || '[]');
+            const residentNames = new Set();
+            weightEntries.forEach(entry => residentNames.add(entry.name));
+
+            const datalist = document.getElementById('residentNamesList');
+            datalist.innerHTML = '';
+            residentNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                datalist.appendChild(option);
+            });
+        }
+    </script>
+</body>
+</html>
